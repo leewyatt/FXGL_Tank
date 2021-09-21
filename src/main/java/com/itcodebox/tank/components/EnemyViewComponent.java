@@ -1,6 +1,5 @@
 package com.itcodebox.tank.components;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
@@ -39,8 +38,10 @@ public class EnemyViewComponent extends Component {
     private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE,ENEMY,PLAYER));
     @Override
     public void onUpdate(double tpf) {
-
-        if (random.nextInt(1000) >960) {
+        if (FXGL.getb("stopTime")) {
+            return;
+        }
+        if (random.nextInt(1000) >950) {
            setMoveDir(Dir.values()[random.nextInt(4)]);
         }else{
             setMoveDir(moveDir);
@@ -57,7 +58,8 @@ public class EnemyViewComponent extends Component {
         }
         spawn("bullet", new SpawnData(getEntity().getCenter().getX()-7,getEntity().getCenter().getY()-5)
                         .put("direction", angleToVector())
-                        .put("owner", entity).put("isRocket",false));
+                        .put("owner", entity)
+        );
 
         shootTimer.capture();
     }
@@ -122,7 +124,7 @@ public class EnemyViewComponent extends Component {
 
     @Override
     public void onAdded() {
-        moveDir = FXGLMath.random(Dir.values()).get();
+        moveDir = Dir.DOWN;
     }
 
     private Vec2 velocity = new Vec2();
@@ -157,7 +159,7 @@ public class EnemyViewComponent extends Component {
                     shoot();
                 }
                 //碰撞后增加改变方向的几率;Increase the chance of changing direction after collision;
-                if (random.nextInt(10) >4) {
+                if (random.nextInt(10) >2) {
                     setMoveDir(Dir.values()[random.nextInt(4)]);
                 }
 

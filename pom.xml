@@ -11,6 +11,8 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+<!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
+<!--        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>-->
     </properties>
 
     <dependencies>
@@ -19,5 +21,7 @@
             <artifactId>fxgl</artifactId>
             <version>11.17</version>
         </dependency>
+
     </dependencies>
+
 </project>

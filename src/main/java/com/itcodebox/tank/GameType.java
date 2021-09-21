@@ -7,5 +7,6 @@ public enum GameType {
     BRICK,GREENS,FLAG,SEA,SNOW,STONE,
     PLAYER,
     ENEMY,
-    BULLET
+    BULLET,
+    REWARD
 }

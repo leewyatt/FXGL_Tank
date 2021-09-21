@@ -53,8 +53,8 @@ public class GameMenu extends FXGLMenu {
                 .to(new Point2D(302, 252))
                 .buildAndPlay();
 
-        Text tip = getUIFactoryService().newText("The game is based on the FXGL engine",Color.web("#BC4E40"),20);
-        tip.setLayoutX(120);
+        Text tip = getUIFactoryService().newText("Powered by FXGL game engine",Color.web("#BC4E40"),22);
+        tip.setLayoutX(150);
         tip.setLayoutY(590);
         //Background is black
         Rectangle bgRect = new Rectangle(getAppWidth(), getAppHeight());
@@ -85,4 +85,7 @@ public class GameMenu extends FXGLMenu {
         pane.addRow(3, new Region(), getUIFactoryService().newText("Space"));
         getDialogService().showBox("Help", pane, getUIFactoryService().newButton("OK"));
     }
+
+
+
 }
