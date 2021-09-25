@@ -1,5 +1,6 @@
 package com.itcodebox.tank.components;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
@@ -9,10 +10,13 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.almasb.fxgl.texture.AnimatedTexture;
+import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.time.LocalTimer;
 import com.itcodebox.tank.Config;
 import javafx.geometry.Point2D;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Random;
@@ -34,31 +38,42 @@ public class EnemyViewComponent extends Component {
     private LocalTimer shootTimer = FXGL.newLocalTimer();
     private Random random = new Random();
     private double speed = 1;
+    private double speedFactor = FXGLMath.random(1.6, 2.2);
     private Dir moveDir;
-    private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE,ENEMY,PLAYER));
+    private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE, ENEMY, PLAYER,BORDER_WALL));
+
+    /**
+     * 变成坦克前3秒不能动
+     */
+    private boolean canMove;
+    private static AnimationChannel ac = new AnimationChannel(FXGL.image("tank/spawnTank.png"), Duration.seconds(0.4), 4);
+
+    private static Dir[] dirs = Dir.values();
+
     @Override
     public void onUpdate(double tpf) {
-        if (FXGL.getb("stopTime")) {
+        speed = tpf * 60;
+        if (FXGL.getb("freezingEnemy") || !canMove) {
             return;
         }
-        if (random.nextInt(1000) >950) {
-           setMoveDir(Dir.values()[random.nextInt(4)]);
-        }else{
-            setMoveDir(moveDir);
+        if (moveDir == Dir.UP && random.nextInt(1000) > 880) {
+            moveDir = dirs[random.nextInt(4)];
+        } else if (random.nextInt(1000) > 980) {
+            moveDir = dirs[random.nextInt(4)];
         }
-
-        if (random.nextInt(1000) >900) {
+        setMoveDir(moveDir);
+        if (random.nextInt(1000) > 960) {
             shoot();
         }
     }
 
     public void shoot() {
-        if (!shootTimer.elapsed(Config.SHOOT_DELAY)) {
+        if (!shootTimer.elapsed(Config.ENEMY_SHOOT_DELAY)) {
             return;
         }
-        spawn("bullet", new SpawnData(getEntity().getCenter().getX()-7,getEntity().getCenter().getY()-5)
-                        .put("direction", angleToVector())
-                        .put("owner", entity)
+        spawn("bullet", new SpawnData(getEntity().getCenter().getX() -3, getEntity().getCenter().getY() -4)
+                .put("direction", angleToVector())
+                .put("owner", entity)
         );
 
         shootTimer.capture();
@@ -76,6 +91,7 @@ public class EnemyViewComponent extends Component {
             return new Point2D(-1, 0);
         }
     }
+
     public void setMoveDir(Dir moveDir) {
         this.moveDir = moveDir;
         switch (moveDir) {
@@ -96,35 +112,45 @@ public class EnemyViewComponent extends Component {
         }
     }
 
-
-
     private void right() {
         getEntity().setRotation(90);
-        move(2.5 * speed, 0);
+        move(speedFactor * speed, 0);
 
     }
 
     private void left() {
         getEntity().setRotation(270);
-        move(-2.5 * speed, 0);
+        move(-speedFactor * speed, 0);
 
     }
 
     private void down() {
         getEntity().setRotation(180);
-        move(0, 2.5 * speed);
+        move(0, speedFactor * speed);
 
     }
 
     private void up() {
         getEntity().setRotation(0);
-        move(0, -2.5 * speed);
+        move(0, -speedFactor * speed);
 
     }
 
     @Override
     public void onAdded() {
         moveDir = Dir.DOWN;
+        Texture texture = FXGL.texture(entity.getString("assentName"));
+
+        AnimatedTexture animatedTexture = new AnimatedTexture(ac).loop();
+        entity.getViewComponent().addChild(animatedTexture);
+        FXGL.runOnce(() -> {
+            if (entity != null && entity.isActive()) {
+                entity.getViewComponent().addChild(texture);
+                entity.getViewComponent().removeChild(animatedTexture);
+                canMove = true;
+            }
+
+        }, Duration.seconds(1));
     }
 
     private Vec2 velocity = new Vec2();
@@ -143,11 +169,11 @@ public class EnemyViewComponent extends Component {
             boolean collision = false;
             Entity entityTemp = null;
             for (int j = 0; j < blockList.size(); j++) {
-                 entityTemp = blockList.get(j);
+                entityTemp = blockList.get(j);
                 if (entityTemp == entity) {
                     continue;
                 }
-                if(entityTemp.getBoundingBoxComponent().isCollidingWith(bbox)){
+                if (entityTemp.getBoundingBoxComponent().isCollidingWith(bbox)) {
                     collision = true;
                     break;
                 }
@@ -155,11 +181,11 @@ public class EnemyViewComponent extends Component {
             if (collision) {
                 entity.translate(-velocity.x, -velocity.y);
                 //碰撞后增加开火几率; Increase the chance of firing after a collision
-                if (random.nextInt(10) > 5) {
+                if (random.nextInt(10) > 6) {
                     shoot();
                 }
                 //碰撞后增加改变方向的几率;Increase the chance of changing direction after collision;
-                if (random.nextInt(10) >2) {
+                if (random.nextInt(10) > 3) {
                     setMoveDir(Dir.values()[random.nextInt(4)]);
                 }
 
@@ -167,6 +193,5 @@ public class EnemyViewComponent extends Component {
             }
         }
     }
-
 
 }

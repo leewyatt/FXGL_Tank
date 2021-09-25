@@ -53,12 +53,17 @@ public class GameMenu extends FXGLMenu {
                 .to(new Point2D(302, 252))
                 .buildAndPlay();
 
-        Text tip = getUIFactoryService().newText("Powered by FXGL game engine",Color.web("#BC4E40"),22);
-        tip.setLayoutX(150);
+        Text tip = getUIFactoryService().newText("Powered by FXGL game engine", Color.web("#BC4E40"), 22);
+        tip.setLayoutX(136);
         tip.setLayoutY(590);
         //Background is black
         Rectangle bgRect = new Rectangle(getAppWidth(), getAppHeight());
-        getContentRoot().getChildren().addAll(bgRect, texture, tankTexture, menuBox,tip);
+        getContentRoot().getChildren().addAll(bgRect, texture, tankTexture, menuBox, tip);
+    }
+
+    @Override
+    public void onCreate() {
+        FXGL.play("mainMenuLoad.wav");
     }
 
     private static class LabelButton extends Label {
@@ -71,7 +76,11 @@ public class GameMenu extends FXGLMenu {
                             .then(hoverColor)
                             .otherwise(Color.WHITE)
             );
-            setOnMouseClicked(e -> action.run());
+            setOnMouseClicked(e -> {
+                FXGL.play("select.wav");
+                action.run();
+            });
+            setOnMouseEntered(e->FXGL.play("mainMenuHover.wav"));
         }
     }
 
@@ -85,7 +94,5 @@ public class GameMenu extends FXGLMenu {
         pane.addRow(3, new Region(), getUIFactoryService().newText("Space"));
         getDialogService().showBox("Help", pane, getUIFactoryService().newButton("OK"));
     }
-
-
 
 }

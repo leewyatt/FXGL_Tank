@@ -8,5 +8,7 @@ public enum GameType {
     PLAYER,
     ENEMY,
     BULLET,
-    REWARD
+    REWARD,
+    BORDER_WALL,
+    EMPTY
 }
