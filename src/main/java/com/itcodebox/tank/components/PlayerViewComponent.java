@@ -40,7 +40,7 @@ public class PlayerViewComponent extends Component {
     private double frameHeight;
 
     private LocalTimer shootTimer = FXGL.newLocalTimer();
-    private static double speedFactor = 2.0;
+    private static double speedFactor = 1.62;
     private AnimatedTexture helmetAnimTexture;
     private boolean armedShip;
     private  Texture  shipTexture ;
@@ -171,7 +171,7 @@ public class PlayerViewComponent extends Component {
             return;
         }
 
-        spawn("bullet", new SpawnData(getEntity().getCenter().getX() - 3, getEntity().getCenter().getY() - 4)
+        spawn("bullet", new SpawnData(getEntity().getCenter().getX()-4, getEntity().getCenter().getY()-4.5)
                 .put("direction", angleToVector())
                 .put("owner", entity));
 

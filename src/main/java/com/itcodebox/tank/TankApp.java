@@ -1,5 +1,6 @@
 package com.itcodebox.tank;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -7,7 +8,6 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
@@ -46,18 +46,14 @@ public class TankApp extends GameApplication {
     /**
      * 目前地图就制作了两关
      */
-    private int MAX_LEVEL = 2;
+    private int MAX_LEVEL = 3;
     private int hasGeneratedEnemy;
     private Entity player;
     private PlayerViewComponent playerView;
     private Random random = new Random();
     private String[] rewardNames = {"gun", "star", "tank", "time", "ship", "bomb", "helmet", "spade"};
-    //private String[] rewardNames = {"gun", "gun"};
     private int[] spawnX = {30, 295 + 30, 589 + 20, 130 + 30, 424 + 30};
-    /**
-     * 可能同时击中的元素
-     */
-    private LazyValue<List<Entity>> blocksValue = new LazyValue<List<Entity>>(() -> FXGL.getGameWorld().getEntitiesByType(GameType.STONE, GameType.BRICK, GameType.GREENS));
+
     /**
      * tank无敌计时器
      */
@@ -164,7 +160,7 @@ public class TankApp extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("level", 1);
+        vars.put("level",1);
         vars.put("playerBulletLevel", 0);
         vars.put("armedHelmet", true);
         vars.put("hasSpade", false);
@@ -269,11 +265,15 @@ public class TankApp extends GameApplication {
     }
 
     private void buildFailedAnim() {
+        FXGL.play("GameOver.wav");
         Texture gameOverTexture = FXGL.texture("GameOver.png");
+        gameOverTexture.setScaleX(2);
+        gameOverTexture.setScaleY(2);
         gameOverTexture.setTranslateY(FXGL.getAppHeight() - gameOverTexture.getHeight() + 24);
         gameOverTexture.setTranslateX(FXGL.getAppWidth() / 2.0 - gameOverTexture.getWidth() / 2.0);
         FXGL.addUINode(gameOverTexture);
-        TranslateTransition tt = new TranslateTransition(Duration.seconds(5), gameOverTexture);
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(3), gameOverTexture);
+        tt.setInterpolator(Interpolators.ELASTIC.EASE_OUT());
         tt.setToY(FXGL.getAppHeight() / 2.0 - gameOverTexture.getHeight() / 2);
         tt.setOnFinished(e -> {
             FXGL.removeUINode(gameOverTexture);
@@ -285,6 +285,7 @@ public class TankApp extends GameApplication {
     }
 
     private void buildWinAnim() {
+        FXGL.play("Win.wav");
         clearEntitiesByTpe(GameType.BULLET, GameType.ENEMY, GameType.PLAYER);
         Rectangle rect = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight(), Config.BG_GARY);
 
@@ -311,8 +312,15 @@ public class TankApp extends GameApplication {
 
         FXGL.runOnce(() -> {
             if (FXGL.geti("level")==MAX_LEVEL) {
-                FXGL.getGameScene().clearUINodes();
-                FXGL.getGameController().gotoMainMenu();
+                FXGL.getDialogService().showConfirmationBox("WIN! Passed all levels. Continue?",result->{
+                    if (result) {
+                        FXGL.getGameScene().clearUINodes();
+                        FXGL.getGameController().gotoMainMenu();
+                    }else {
+                        FXGL.getGameController().exit();
+                    }
+                });
+
             }else {
                 FXGL.getGameScene().clearUINodes();
                 FXGL.inc("level", 1);
@@ -342,6 +350,7 @@ public class TankApp extends GameApplication {
         //恢复消灭敌军数量
         FXGL.set("destroyedEnemy", 0);
 
+        hasGeneratedEnemy = 0;
         freezingTimer = null;
         spadeTimer = null;
         helmetTimer = FXGL.newLocalTimer();
@@ -611,7 +620,8 @@ public class TankApp extends GameApplication {
     private void bulletHit(Entity bullet, boolean removeBullet) {
         Entity tank = bullet.getObject("owner");
         Serializable tankType = tank.getType();
-        List<Entity> list = blocksValue.get();
+        List<Entity> list = FXGL.getGameWorld().getEntitiesByType(GameType.STONE, GameType.BRICK, GameType.GREENS);
+
         for (Entity entity : list) {
             Serializable entityType = entity.getType();
             if (entityType == GameType.BRICK) {

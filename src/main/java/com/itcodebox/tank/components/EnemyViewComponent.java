@@ -21,7 +21,6 @@ import javafx.util.Duration;
 import java.util.List;
 import java.util.Random;
 
-import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.itcodebox.tank.GameType.*;
 
 /**
@@ -38,7 +37,7 @@ public class EnemyViewComponent extends Component {
     private LocalTimer shootTimer = FXGL.newLocalTimer();
     private Random random = new Random();
     private double speed = 1;
-    private double speedFactor = FXGLMath.random(1.6, 2.2);
+    private double speedFactor = FXGLMath.random(1.1, 1.35);
     private Dir moveDir;
     private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE, ENEMY, PLAYER,BORDER_WALL));
 
@@ -58,11 +57,12 @@ public class EnemyViewComponent extends Component {
         }
         if (moveDir == Dir.UP && random.nextInt(1000) > 880) {
             moveDir = dirs[random.nextInt(4)];
-        } else if (random.nextInt(1000) > 980) {
+        } else
+            if (random.nextInt(1000) > 980) {
             moveDir = dirs[random.nextInt(4)];
         }
         setMoveDir(moveDir);
-        if (random.nextInt(1000) > 960) {
+        if (random.nextInt(1000) > 980) {
             shoot();
         }
     }
@@ -71,7 +71,7 @@ public class EnemyViewComponent extends Component {
         if (!shootTimer.elapsed(Config.ENEMY_SHOOT_DELAY)) {
             return;
         }
-        spawn("bullet", new SpawnData(getEntity().getCenter().getX() -3, getEntity().getCenter().getY() -4)
+        FXGL.spawn("bullet", new SpawnData(getEntity().getCenter().getX() -4, getEntity().getCenter().getY() -4)
                 .put("direction", angleToVector())
                 .put("owner", entity)
         );
@@ -115,7 +115,6 @@ public class EnemyViewComponent extends Component {
     private void right() {
         getEntity().setRotation(90);
         move(speedFactor * speed, 0);
-
     }
 
     private void left() {

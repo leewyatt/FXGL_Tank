@@ -1,7 +1,9 @@
 package com.itcodebox.tank;
 
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.dsl.components.*;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -51,7 +53,7 @@ public class GameEntityFactory implements EntityFactory {
         });
         return FXGL.entityBuilder(data)
                 .type(GameType.PLAYER)
-                .bbox(BoundingShape.box(35, 35))
+                .bbox(BoundingShape.box(38, 38))
                 .view("tank/H1U.png")
                 .view(hpView)
                 .with(hpComponent)
@@ -67,7 +69,7 @@ public class GameEntityFactory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(GameType.ENEMY)
                 .with("assentName", assentName)
-                .bbox(BoundingShape.box(35, 35))
+                .bbox(BoundingShape.box(36, 36))
                 .with(new EnemyViewComponent())
                 //.with(new KeepOnScreenComponent())
                 .collidable()
@@ -152,7 +154,7 @@ public class GameEntityFactory implements EntityFactory {
     @Spawns("bullet")
     public Entity newBullet(SpawnData data) {
         double speed;
-        String texture;
+        String textureStr;
         Entity owner = data.get("owner");
         CollidableComponent collidableComponent = new CollidableComponent(true);
         //检测碰撞, 忽略同类;Detect collisions, ignore the same type;
@@ -160,26 +162,23 @@ public class GameEntityFactory implements EntityFactory {
         if (GameType.PLAYER == owner.getType()) {
             int bulletLevel = FXGL.geti("playerBulletLevel");
             if (bulletLevel < Config.PLAYER_BULLET_MAX_LEVEL) {
-                texture = "bullet/normal.png";
+                textureStr = "bullet/normal.png";
                 FXGL.play("normalFire.wav");
             } else {
-                texture = "bullet/plus.png";
+                textureStr = "bullet/plus.png";
                 FXGL.play("rocketFire.wav");
             }
             speed = Config.PLAYER_BULLET_SPEED + bulletLevel * 100;
         } else {
             speed = Config.ENEMY_BULLET_SPEED;
-            texture = "bullet/normal.png";
+            textureStr = "bullet/normal.png";
             FXGL.play("normalFire.wav");
         }
-
         return FXGL.entityBuilder(data)
                 .type(GameType.BULLET)
-                .viewWithBBox(texture)
+                .viewWithBBox(textureStr)
                 .with(collidableComponent)
-                //.with(new OffscreenCleanComponent())
                 .with(new ProjectileComponent(data.get("direction"), speed))
-                .scale(1.4, 1.4)
                 .build();
     }
 

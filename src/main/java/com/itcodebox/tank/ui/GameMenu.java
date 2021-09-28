@@ -6,8 +6,8 @@ import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.input.view.KeyView;
 import com.almasb.fxgl.texture.Texture;
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -26,6 +26,9 @@ import static javafx.scene.input.KeyCode.*;
  * @author LeeWyatt
  */
 public class GameMenu extends FXGLMenu {
+
+    private final TranslateTransition tt;
+
     public GameMenu() {
         super(MenuType.MAIN_MENU);
         Texture texture = texture("logo.png");
@@ -44,14 +47,23 @@ public class GameMenu extends FXGLMenu {
 
         Texture tankTexture = FXGL.texture("tank/H1U.png");
         tankTexture.setRotate(90);
-        FXGL.animationBuilder(this)
-                .duration(Duration.seconds(1.6))
-                .interpolator(Interpolators.ELASTIC.EASE_OUT())
-                .onFinished(() -> menuBox.setVisible(true))
-                .translate(tankTexture)
-                .from(new Point2D(150, 252))
-                .to(new Point2D(302, 252))
-                .buildAndPlay();
+        //FXGL.animationBuilder(this)
+        //        .duration(Duration.seconds(1.6))
+        //        .interpolator(Interpolators.ELASTIC.EASE_OUT())
+        //        .onFinished(() -> menuBox.setVisible(true))
+        //        .translate(tankTexture)
+        //        .from(new Point2D(150, 252))
+        //        .to(new Point2D(302, 252))
+        //        .buildAndPlay();
+
+        tt = new TranslateTransition(Duration.seconds(2), tankTexture);
+        tt.setInterpolator(Interpolators.ELASTIC.EASE_OUT());
+        tt.setFromX(100);
+        tt.setFromY(252);
+        tt.setToX(302);
+        tt.setToY(252);
+        tt.setOnFinished(e->menuBox.setVisible(true));
+
 
         Text tip = getUIFactoryService().newText("Powered by FXGL game engine", Color.web("#BC4E40"), 22);
         tip.setLayoutX(136);
@@ -59,12 +71,15 @@ public class GameMenu extends FXGLMenu {
         //Background is black
         Rectangle bgRect = new Rectangle(getAppWidth(), getAppHeight());
         getContentRoot().getChildren().addAll(bgRect, texture, tankTexture, menuBox, tip);
+
     }
 
     @Override
     public void onCreate() {
         FXGL.play("mainMenuLoad.wav");
+        tt.play();
     }
+
 
     private static class LabelButton extends Label {
         LabelButton(String name, Color hoverColor, Runnable action) {

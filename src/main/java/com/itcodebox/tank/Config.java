@@ -8,16 +8,16 @@ import javafx.util.Duration;
  */
 public class Config {
     /**
-     * 顶级的子弹可以除草, 可以打石头墙
+     * 顶级的子弹可以摧毁树木, 可以打石头墙
      */
     public static final int PLAYER_BULLET_MAX_LEVEL = 2;
     public static final int  MAX_ENEMY_NUM = 20;
 
     public static final int PLAYER_HEALTH = 5;
-    public static final double PLAYER_BULLET_SPEED = 320;
-    public static final double ENEMY_BULLET_SPEED = 350;
-    public static final Duration PLAYER_SHOOT_DELAY = Duration.seconds(.45);
-    public static final Duration ENEMY_SHOOT_DELAY = Duration.seconds(.35);
+    public static final double PLAYER_BULLET_SPEED = 420;
+    public static final double ENEMY_BULLET_SPEED = 450;
+    public static final Duration PLAYER_SHOOT_DELAY = Duration.seconds(0.3);
+    public static final Duration ENEMY_SHOOT_DELAY = Duration.seconds(0.35);
     /**
      * 保护罩保护的无敌时间
      */
@@ -43,7 +43,7 @@ public class Config {
 
     public static final Duration BOMB_ANIME_TIME = Duration.seconds(0.5);
 
-    public static final Duration GENERATE_ENEMY_TIME = Duration.seconds(15);
+    public static final Duration GENERATE_ENEMY_TIME = Duration.seconds(8);
 
     public static final Color BG_GARY = Color.web("#666666");
 
