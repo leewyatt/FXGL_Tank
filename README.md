@@ -7,6 +7,8 @@
 
 > Email: leewyatt7788@gmail.com
 
+> javafx 交流QQ群 518914410
+
 There are a variety of game props.
 ![img.png](ReadmeImages/game0.png)
 ![img.png](ReadmeImages/game1.png)
