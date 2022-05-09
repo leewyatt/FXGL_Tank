@@ -1,0 +1,12 @@
+.main-menu-btn {
+    -fx-font-size: 23px;
+    -fx-text-fill: white;
+}
+.main-menu-btn:selected {
+    -fx-text-fill: #B9350E;
+}
+.main-menu-btn .radio,
+.main-menu-btn .dot
+{
+    visibility: hidden;
+}
