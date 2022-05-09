@@ -6,22 +6,42 @@
 
     <groupId>org.example</groupId>
     <artifactId>FXGL_Tank</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-<!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
-<!--        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>-->
-    </properties>
+    <version>0.3.0</version>
 
     <dependencies>
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
-            <version>11.17</version>
+            <version>17.1</version>
         </dependency>
-
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.0</version>
+                <configuration>
+                    <release>17</release>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <stripDebug>true</stripDebug>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <launcher>Tank</launcher>
+                    <jlinkImageName>Tank</jlinkImageName>
+                    <jlinkZipName>TankZip</jlinkZipName>
+                    <mainClass>com.leewyatt.github.tank.TankApp</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

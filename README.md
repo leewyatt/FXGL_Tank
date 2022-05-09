@@ -8,7 +8,8 @@
 > Email: leewyatt7788@gmail.com
 
 > javafx 交流QQ群 518914410
+> 目前的加群问题: JavaFX是什么? 答: JAVA图形界面技术
 
 There are a variety of game props.
-![img.png](ReadmeImages/game0.png)
-![img.png](ReadmeImages/game1.png)
+![img.png](ReadmeImages/game.jpg)
+![img.png](ReadmeImages/startup.jpg)
