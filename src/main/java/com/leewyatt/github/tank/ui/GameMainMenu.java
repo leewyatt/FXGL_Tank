@@ -36,14 +36,14 @@ public class GameMainMenu extends FXGLMenu {
         texture.setLayoutX(144);
         texture.setLayoutY(160);
 
-        MainMenuButton newGameBtn = new MainMenuButton("START", this::fireNewGame);
-        MainMenuButton constructBtn = new MainMenuButton("CONSTRUCT",()->{
+        MainMenuButton newGameBtn = new MainMenuButton("START GAME", this::fireNewGame);
+        MainMenuButton constructBtn = new MainMenuButton("CONSTRUCT", () -> {
             getContentRoot().getChildren().setAll(new ConstructPane());
         });
         MainMenuButton helpBtn = new MainMenuButton("HELP", this::instructions);
-        MainMenuButton exitBtn = new MainMenuButton("EXIT", ()->getGameController().exit());
+        MainMenuButton exitBtn = new MainMenuButton("EXIT", () -> getGameController().exit());
         ToggleGroup tg = new ToggleGroup();
-        tg.getToggles().addAll(newGameBtn,constructBtn,helpBtn,exitBtn);
+        tg.getToggles().addAll(newGameBtn, constructBtn, helpBtn, exitBtn);
         newGameBtn.setSelected(true);
         VBox menuBox = new VBox(
                 5,
@@ -54,7 +54,7 @@ public class GameMainMenu extends FXGLMenu {
         );
         menuBox.setAlignment(Pos.CENTER_LEFT);
         menuBox.setLayoutX(240);
-        menuBox.setLayoutY(390);
+        menuBox.setLayoutY(360);
         menuBox.setVisible(false);
 
         Texture tankTexture = FXGL.texture("ui/tankLoading.png");
@@ -75,7 +75,7 @@ public class GameMainMenu extends FXGLMenu {
         textureWall.setLayoutX(310);
         textureWall.setLayoutY(600);
 
-        defaultPane = new Pane(bgRect, texture, tankTexture, menuBox, line,textureWall);
+        defaultPane = new Pane(bgRect, texture, tankTexture, menuBox, line, textureWall);
         getContentRoot().getChildren().setAll(defaultPane);
     }
 

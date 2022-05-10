@@ -24,7 +24,10 @@
 .construct-pane {
     -fx-background-color: GRAY;
 }
-
+.tile-btn {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, gray, 2, 0.2, 0, 0);
+}
 .tile-btn:focused {
     -fx-background-color: black;
 }
@@ -71,6 +74,9 @@
 .bottom-box .button:hover{
     -fx-background-color: black;
     -fx-text-fill: white;
+}
+.bottom-box .button:focused {
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0.2, 0, 0);
 }
 
 .bottom-box .button Region {

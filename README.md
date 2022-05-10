@@ -11,5 +11,6 @@
 > 目前的 加群问题: JavaFX是什么? 答: JAVA图形界面技术
 
 There are a variety of game props.
+![screenshot](ReadmeImages/construct.jpg)
 ![screenshot](ReadmeImages/game.jpg)
 ![screenshot](ReadmeImages/startup.jpg)

@@ -15,10 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -139,6 +136,7 @@ public class ConstructPane extends BorderPane {
                 btnBrick, btnBrick4, btnStone, btnStone4, btnSnow, btnSnow4, btnSea, btnSea4, btnGreens, btnGreens4, btnEmpty, btnEmpty4
         );
         tp.setVgap(8);
+        tp.setTileAlignment(Pos.TOP_CENTER);
         return tp;
     }
 
@@ -222,6 +220,7 @@ public class ConstructPane extends BorderPane {
     }
 
     private void initMapData() {
+        //boolean exists= new File(GameConfig.CUSTOM_LEVEL_DATA).exists();
         boolean exists = getFileSystemService().exists(GameConfig.CUSTOM_LEVEL_DATA);
         if (exists) {
             loadMapData();
