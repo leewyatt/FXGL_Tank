@@ -158,12 +158,16 @@ public class ConstructPane extends BorderPane {
     private void saveConstructMap(boolean startGame) {
         List<String> list = new ArrayList<>(text("levelStart.txt"));
         String grid = "";
+        int y;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
                 if (map[j][i] != GameType.EMPTY) {
+                    y = (i + 2) * CELL_SIZE;
                     if (map[j][i] == GameType.BRICK) {
                         grid = " gid=\"1\"";
                     } else if (map[j][i] == GameType.SEA) {
+                        //SEA ,不是object img 是普通的object 所以 i+1
+                        y = (i + 1) * CELL_SIZE;
                         grid = "";
                     } else if (map[j][i] == GameType.SNOW) {
                         grid = " gid=\"3\"";
@@ -171,14 +175,14 @@ public class ConstructPane extends BorderPane {
                         grid = " gid=\"4\"";
                     } else if (map[j][i] == GameType.GREENS) {
                         grid = " gid=\"5\"";
-                        ;
                     }
                     //因为有边框,所以x方向是 j+1.
                     //object 里的图像对象在Tiled软件里记录是左下角的坐标,而不是左上角的坐标,所以 i+1+1
+
                     list.add(String.format(
                             "  <object id=\"%d\" type=\"%s\"%s x=\"%d\" y=\"%d\" width=\"24\" height=\"24\"/>",
                             idIndex++, map[j][i].toString().toLowerCase(Locale.ROOT), grid,
-                            (j + 1) * CELL_SIZE, (i + 2) * CELL_SIZE));
+                            (j + 1) * CELL_SIZE, y));
                 }
             }
         }

@@ -43,8 +43,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class TankApp extends GameApplication {
 
-    public int initLevel = 1;
-
     private Entity player;
     private PlayerComponent playerComponent;
     private Random random = new Random();
