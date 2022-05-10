@@ -4,7 +4,7 @@ import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import com.leewyatt.github.tank.GameType;
 import com.leewyatt.github.tank.ItemType;
 import com.leewyatt.github.tank.TankApp;
@@ -51,12 +51,12 @@ public class PlayerItemHandler extends CollisionHandler {
             }
         }
         if (ItemType.STAR == itemType) {
-            if (geti("playerBulletLevel") < Config.PLAYER_BULLET_MAX_LEVEL) {
+            if (geti("playerBulletLevel") < GameConfig.PLAYER_BULLET_MAX_LEVEL) {
                 inc("playerBulletLevel", 1);
             }
         }
         if (ItemType.GUN == itemType) {
-            set("playerBulletLevel", Config.PLAYER_BULLET_MAX_LEVEL);
+            set("playerBulletLevel", GameConfig.PLAYER_BULLET_MAX_LEVEL);
         }
         if (ItemType.TIME == itemType) {
             app.freezingEnemy();

@@ -1,12 +1,108 @@
+.fxgl_button:hover {
+    -fx-background-color: #ef6a43;
+}
+
+.fxgl_button:pressed, .fxgl_button:default:hover:pressed {
+    -fx-background-color: #B9350E;
+}
+
 .main-menu-btn {
     -fx-font-size: 23px;
     -fx-text-fill: white;
 }
+
 .main-menu-btn:selected {
     -fx-text-fill: #B9350E;
 }
+
 .main-menu-btn .radio,
-.main-menu-btn .dot
-{
+.main-menu-btn .dot {
     visibility: hidden;
+}
+
+/*----------Construct Pane---------*/
+.construct-pane {
+    -fx-background-color: GRAY;
+}
+
+.tile-btn:focused {
+    -fx-background-color: black;
+}
+
+.right-box {
+    -fx-background-color: white;
+}
+
+.grid-check-box {
+    -fx-pref-width: 130px;
+    -fx-pref-height: 30px;
+    -fx-background-color: white;
+    -fx-padding: 0 0 0 12px;
+    -fx-effect: dropshadow(three-pass-box, gray, 5, 0.2, 0, 0);
+}
+
+.grid-check-box:hover {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.grid-check-box .box {
+    -fx-border-color: black;
+    -fx-background-color: white;
+}
+
+.grid-check-box:hover .box{
+    -fx-border-color: white;
+    -fx-background-color: black;
+}
+
+.bottom-box {
+    -fx-alignment: top-center;
+}
+
+.bottom-box .button {
+    -fx-pref-width: 130px;
+    -fx-pref-height: 30px;
+    -fx-graphic-text-gap: 5px;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, gray, 5, 0.2, 0, 0);
+}
+
+.bottom-box .button:hover{
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.bottom-box .button Region {
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+    -fx-background-color: black;
+}
+
+.bottom-box .button:hover Region{
+    -fx-background-color: white;
+}
+
+#btn-back Region {
+    -fx-shape: "M9.4,0.9c0.5,0.5,0.5,1.3-0.1,1.8L5,6.7h10.1c4.6,0,8.4,3.8,8.4,8.4s-3.8,8.4-8.4,8.4H1.8  c-0.7,0-1.3-0.6-1.3-1.3c0-0.7,0.6-1.3,1.3-1.3c0,0,0,0,0,0h13.3c3.2,0,5.8-2.6,5.8-5.8s-2.6-5.8-5.8-5.8H5l4.3,4  c0.5,0.5,0.5,1.3,0.1,1.8s-1.3,0.5-1.8,0.1L0.9,8.9C0.4,8.5,0.4,7.6,0.9,7.1c0,0,0,0,0.1-0.1l6.6-6.2C8.1,0.4,8.9,0.4,9.4,0.9  L9.4,0.9z";
+}
+
+#btn-clear Region {
+    -fx-shape: "M18.8,6.6v14.8H5.2V6.6H2.6V4.9h4.8V2.6h9.1v2.2h4.8v1.7H18.8z M17.1,6.6H6.9v13.1h10.1V6.6z M9.6,9h1.1  c0.1,0,0.2,0.1,0.2,0.2v9c0,0.1-0.1,0.2-0.2,0.2H9.6c-0.1,0-0.2-0.1-0.2-0.2v-9C9.4,9.1,9.5,9,9.6,9z M13.3,9h1.1  c0.1,0,0.2,0.1,0.2,0.2v9c0,0.1-0.1,0.2-0.2,0.2h-1.1c-0.1,0-0.2-0.1-0.2-0.2v-9C13.1,9.1,13.2,9,13.3,9z";
+}
+
+#btn-reload Region {
+    -fx-shape: "M19.8,1.6C18.2,1,16.2,0.6,14,0.6S9.8,1,8.2,1.6C6.7,2.2,5.7,3,5.5,3.9h0v7.6h1.5v-5C7.3,6.8,7.7,7,8.2,7.2  c1.6,0.6,3.6,0.9,5.8,0.9s4.2-0.3,5.8-0.9c0.5-0.2,0.9-0.4,1.3-0.6v13.7c0,0.9-2.8,2.3-7.1,2.3c-4.3,0-7.1-1.4-7.1-2.3v-4.1H5.5v4.1  c0,1.1,1,2.1,2.8,2.8C9.8,23.7,11.8,24,14,24c2.2,0,4.2-0.3,5.8-0.9c1.8-0.7,2.8-1.7,2.8-2.8V4.4C22.5,3.2,21.6,2.2,19.8,1.6z   M14,6.7c-4.3,0-7.1-1.4-7.1-2.3S9.7,2,14,2c4.3,0,7.1,1.4,7.1,2.3S18.3,6.7,14,6.7zM9.2,9.5l-1,1l2.6,2.5H0.8v1.4h9.9L8.1,17l1,1l4.3-4.2L9.2,9.5z";
+}
+#btn-start Region {
+    -fx-background-color: #e53737;
+    -fx-shape: "M20.6,14.3c1.2-0.8,1.6-2.6,0.7-3.8c-0.2-0.3-0.4-0.5-0.7-0.7L6.9,0.5C5.1-0.8,2.7,0.5,2.7,2.7v18.5  c0,2.2,2.5,3.5,4.3,2.3C6.9,23.5,20.6,14.3,20.6,14.3z";
+}
+
+#btn-start:hover {
+    -fx-text-fill: #ff0000;
+}
+
+#btn-start:hover Region {
+    -fx-background-color: #ff0000;
 }

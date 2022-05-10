@@ -2,7 +2,7 @@ package com.leewyatt.github.tank.collision;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import com.leewyatt.github.tank.GameType;
 
 import java.io.Serializable;
@@ -44,14 +44,14 @@ public class BulletBrickHandler extends CollisionHandler {
             } else if (entityType == GameType.GREENS) {
                 if (tankType == GameType.PLAYER
                         && entity.isActive()
-                        && geti("playerBulletLevel") == Config.PLAYER_BULLET_MAX_LEVEL) {
+                        && geti("playerBulletLevel") == GameConfig.PLAYER_BULLET_MAX_LEVEL) {
                     entity.removeFromWorld();
                 }
             } else { //STONE
                 removeBullet = true;
                 if (tankType == GameType.PLAYER
                         && entity.isActive()
-                        && geti("playerBulletLevel") == Config.PLAYER_BULLET_MAX_LEVEL) {
+                        && geti("playerBulletLevel") == GameConfig.PLAYER_BULLET_MAX_LEVEL) {
                     entity.removeFromWorld();
                 }
             }

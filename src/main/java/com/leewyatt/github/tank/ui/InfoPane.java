@@ -1,7 +1,7 @@
 package com.leewyatt.github.tank.ui;
 
 import com.almasb.fxgl.texture.Texture;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -15,13 +15,15 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 有空修改成单例类,感觉更好
  */
 public class InfoPane extends Pane {
+
     public InfoPane() {
         TilePane tilePane = new TilePane(10, 10);
         tilePane.setAlignment(Pos.TOP_LEFT);
         tilePane.setPrefSize(65, 390);
-        for (int i = 0; i < Config.ENEMY_AMOUNT; i++) {
+        for (int i = 0; i < GameConfig.ENEMY_AMOUNT; i++) {
             tilePane.getChildren().add(texture("ui/enemy_pre.png"));
         }
         tilePane.setLayoutX(25);
@@ -64,11 +66,10 @@ public class InfoPane extends Pane {
 
         ObservableList<Node> enemyPreNodes = tilePane.getChildren();
         getip("spawnedEnemy").addListener((ob, ov, nv) -> {
-            for (int i = enemyPreNodes.size() - 1; i >= Config.ENEMY_AMOUNT - nv.intValue(); i--) {
+            for (int i = enemyPreNodes.size() - 1; i >= GameConfig.ENEMY_AMOUNT - nv.intValue(); i--) {
                 enemyPreNodes.get(i).setVisible(false);
             }
         });
     }
-
 
 }

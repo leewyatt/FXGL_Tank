@@ -32,10 +32,10 @@ public class GameEntityFactory implements EntityFactory {
 
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
-        HealthIntComponent hpComponent = new HealthIntComponent(Config.PLAYER_HEALTH);
+        HealthIntComponent hpComponent = new HealthIntComponent(GameConfig.PLAYER_HEALTH);
         ProgressBar hpView = new ProgressBar(false);
         hpView.setFill(Color.LIGHTGREEN);
-        hpView.setMaxValue(Config.PLAYER_HEALTH);
+        hpView.setMaxValue(GameConfig.PLAYER_HEALTH);
         hpView.setWidth(35);
         hpView.setHeight(8);
         hpView.setTranslateY(42);
@@ -43,9 +43,9 @@ public class GameEntityFactory implements EntityFactory {
         hpView.currentValueProperty().bind(hpComponent.valueProperty());
         hpComponent.valueProperty().addListener((ob, ov, nv) -> {
             int hpValue = nv.intValue();
-            if (hpValue >= Config.PLAYER_HEALTH * 0.7) {
+            if (hpValue >= GameConfig.PLAYER_HEALTH * 0.7) {
                 hpView.setFill(Color.LIGHTGREEN);
-            } else if (hpValue >= Config.PLAYER_HEALTH * 0.4) {
+            } else if (hpValue >= GameConfig.PLAYER_HEALTH * 0.4) {
                 hpView.setFill(Color.GOLD);
             } else {
                 hpView.setFill(Color.RED);
@@ -59,7 +59,6 @@ public class GameEntityFactory implements EntityFactory {
                 .with(new EffectComponent())
                 .with(hpComponent)
                 .with(new PlayerComponent())
-                //.with(new KeepOnScreenComponent())
                 .collidable()
                 .build();
     }
@@ -154,7 +153,7 @@ public class GameEntityFactory implements EntityFactory {
                 .collidable()
                 .build();
         //在最后的几秒,会闪烁提示玩家, 基地的保护时间即将过期
-        FXGL.runOnce(animatedTexture::loop, Config.SPADE_NORMAL_TIME);
+        FXGL.runOnce(animatedTexture::loop, GameConfig.SPADE_NORMAL_TIME);
         return entity;
     }
 
@@ -168,16 +167,16 @@ public class GameEntityFactory implements EntityFactory {
         collidableComponent.addIgnoredType(owner.getType());
         if (GameType.PLAYER == owner.getType()) {
             int bulletLevel = FXGL.geti("playerBulletLevel");
-            if (bulletLevel < Config.PLAYER_BULLET_MAX_LEVEL) {
+            if (bulletLevel < GameConfig.PLAYER_BULLET_MAX_LEVEL) {
                 textureStr = "bullet/normal.png";
                 FXGL.play("normalFire.wav");
             } else {
                 textureStr = "bullet/plus.png";
                 FXGL.play("rocketFire.wav");
             }
-            speed = Config.PLAYER_BULLET_SPEED + bulletLevel * 60;
+            speed = GameConfig.PLAYER_BULLET_SPEED + bulletLevel * 60;
         } else {
-            speed = Config.ENEMY_BULLET_SPEED;
+            speed = GameConfig.ENEMY_BULLET_SPEED;
             textureStr = "bullet/normal.png";
             FXGL.play("normalFire.wav");
         }
@@ -189,7 +188,7 @@ public class GameEntityFactory implements EntityFactory {
                 .build();
     }
 
-    Duration explodeAnimeTime = Duration.seconds(0.5);
+    private final Duration explodeAnimeTime = Duration.seconds(0.5);
     private  final AnimationChannel explodeAc = new AnimationChannel(FXGL.image("explode/explode_level_2.png"), explodeAnimeTime,9);
 
     @Spawns("explode")
@@ -200,8 +199,8 @@ public class GameEntityFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("empty")
-    public Entity newEmpty(SpawnData data) {
+    @Spawns("spawnBox")
+    public Entity newSpawnBox(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .at(data.getX() - 5, data.getY() - 5)
                 .bbox(BoundingShape.box(50, 50))
@@ -212,19 +211,18 @@ public class GameEntityFactory implements EntityFactory {
 
     @Spawns("item")
     public Entity newItem(SpawnData data) {
-        //1张图片. 产生闪烁的效果
-
+        //1帧图片. 产生闪烁的效果,有"投机取巧"之嫌,以后可能使用2帧的图片替换
         AnimationChannel ac = new AnimationChannel(FXGL.image("item/" + data.<ItemType>get("itemType").toString().toLowerCase() + ".png"), 1, 30, 28, Duration.seconds(.5), 0, 1);
         AnimatedTexture animatedTexture = new AnimatedTexture(ac);
         Entity entity = FXGL.entityBuilder(data)
                 .type(GameType.ITEM)
                 .viewWithBBox(animatedTexture)
                 .scale(1.2, 1.2)
-                .with(new ExpireCleanComponent(Config.ITEM_SHOW_TIME))
+                .with(new ExpireCleanComponent(GameConfig.ITEM_SHOW_TIME))
                 .collidable()
                 .zIndex(200)
                 .build();
-        FXGL.runOnce(animatedTexture::loop, Config.ITEM_NORMAL_SHOW_TIME);
+        FXGL.runOnce(animatedTexture::loop, GameConfig.ITEM_NORMAL_SHOW_TIME);
         return entity;
     }
 

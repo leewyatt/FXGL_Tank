@@ -11,8 +11,8 @@ import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -28,6 +28,7 @@ import static javafx.scene.input.KeyCode.*;
 public class GameMainMenu extends FXGLMenu {
 
     private final TranslateTransition tt;
+    private final Pane defaultPane;
 
     public GameMainMenu() {
         super(MenuType.MAIN_MENU);
@@ -36,14 +37,18 @@ public class GameMainMenu extends FXGLMenu {
         texture.setLayoutY(160);
 
         MainMenuButton newGameBtn = new MainMenuButton("START", this::fireNewGame);
+        MainMenuButton constructBtn = new MainMenuButton("CONSTRUCT",()->{
+            getContentRoot().getChildren().setAll(new ConstructPane());
+        });
         MainMenuButton helpBtn = new MainMenuButton("HELP", this::instructions);
         MainMenuButton exitBtn = new MainMenuButton("EXIT", ()->getGameController().exit());
         ToggleGroup tg = new ToggleGroup();
-        tg.getToggles().addAll(newGameBtn,helpBtn,exitBtn);
+        tg.getToggles().addAll(newGameBtn,constructBtn,helpBtn,exitBtn);
         newGameBtn.setSelected(true);
         VBox menuBox = new VBox(
                 5,
                 newGameBtn,
+                constructBtn,
                 helpBtn,
                 exitBtn
         );
@@ -70,11 +75,13 @@ public class GameMainMenu extends FXGLMenu {
         textureWall.setLayoutX(310);
         textureWall.setLayoutY(600);
 
-        getContentRoot().getChildren().addAll(bgRect, texture, tankTexture, menuBox, line,textureWall);
+        defaultPane = new Pane(bgRect, texture, tankTexture, menuBox, line,textureWall);
+        getContentRoot().getChildren().setAll(defaultPane);
     }
 
     @Override
     public void onCreate() {
+        getContentRoot().getChildren().setAll(defaultPane);
         FXGL.play("mainMenuLoad.wav");
         tt.play();
     }
@@ -83,10 +90,23 @@ public class GameMainMenu extends FXGLMenu {
         GridPane pane = new GridPane();
         pane.setHgap(20);
         pane.setVgap(15);
-        pane.addRow(0, getUIFactoryService().newText("Movement"), new HBox(4, new KeyView(UP), new KeyView(DOWN), new KeyView(LEFT), new KeyView(RIGHT)));
-        pane.addRow(1, new Region(), getUIFactoryService().newText("Up,Down,Left,Right"));
-        pane.addRow(2, getUIFactoryService().newText("Shoot"), new KeyView(SPACE));
-        pane.addRow(3, new Region(), getUIFactoryService().newText("Space"));
+        KeyView kvW = new KeyView(W);
+        kvW.setPrefWidth(38);
+        TilePane tp1 = new TilePane(kvW, new KeyView(S), new KeyView(A), new KeyView(D));
+        tp1.setPrefWidth(200);
+        tp1.setHgap(2);
+        tp1.setAlignment(Pos.CENTER_LEFT);
+
+        pane.addRow(0, getUIFactoryService().newText("Movement"), tp1);
+        pane.addRow(1, getUIFactoryService().newText("Shoot"), new KeyView(F));
+        KeyView kvL = new KeyView(LEFT);
+        kvL.setPrefWidth(38);
+        TilePane tp2 = new TilePane(new KeyView(UP), new KeyView(DOWN), kvL, new KeyView(RIGHT));
+        tp2.setPrefWidth(200);
+        tp2.setHgap(2);
+        tp2.setAlignment(Pos.CENTER_LEFT);
+        pane.addRow(2, getUIFactoryService().newText("Movement"), tp2);
+        pane.addRow(3, getUIFactoryService().newText("Shoot"), new KeyView(SPACE));
         DialogService dialogService = getDialogService();
         dialogService.showBox("Help", pane, getUIFactoryService().newButton("OK"));
     }

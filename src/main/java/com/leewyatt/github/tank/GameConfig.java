@@ -7,9 +7,9 @@ import javafx.util.Duration;
 /**
  * @author LeeWyatt
  */
-public class Config {
+public class GameConfig {
 
-    private Config() {
+    private GameConfig() {
     }
 
     private static PropertyMap map;
@@ -67,5 +67,8 @@ public class Config {
 
     public static final int PLAYER_SPEED = map.getInt("playerSpeed");
     public static final int ENEMY_SPEED = map.getInt("enemySpeed");
+
+    public static final String CUSTOM_LEVEL_PATH = map.getString("customLevelPath");
+    public static final String CUSTOM_LEVEL_DATA = map.getString("customLevelData");
 
 }

@@ -13,7 +13,7 @@ import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 import com.almasb.fxgl.time.LocalTimer;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class EnemyComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        speed = tpf * Config.ENEMY_SPEED;
+        speed = tpf * GameConfig.ENEMY_SPEED;
         if (FXGL.getb("freezingEnemy") || !canMove) {
             return;
         }
@@ -59,7 +59,7 @@ public class EnemyComponent extends Component {
     }
 
     public void shoot() {
-        if (!shootTimer.elapsed(Config.ENEMY_SHOOT_DELAY)) {
+        if (!shootTimer.elapsed(GameConfig.ENEMY_SHOOT_DELAY)) {
             return;
         }
         FXGL.spawn("bullet", new SpawnData(getEntity().getCenter().add(-4, -4))

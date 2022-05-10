@@ -10,7 +10,7 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.BoundingBoxComponent;
 import com.almasb.fxgl.time.LocalTimer;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import com.leewyatt.github.tank.effects.ShipEffect;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class PlayerComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
-        speed = tpf * Config.PLAYER_SPEED;
+        speed = tpf * GameConfig.PLAYER_SPEED;
         movedThisFrame = false;
     }
 
@@ -110,7 +110,7 @@ public class PlayerComponent extends Component {
     }
 
     public void shoot() {
-        if (!shootTimer.elapsed(Config.PLAYER_SHOOT_DELAY)) {
+        if (!shootTimer.elapsed(GameConfig.PLAYER_SHOOT_DELAY)) {
             return;
         }
         spawn("bullet", new SpawnData(getEntity().getCenter().add(-4, -4.5))

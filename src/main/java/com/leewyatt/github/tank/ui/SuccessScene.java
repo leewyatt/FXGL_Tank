@@ -3,7 +3,7 @@ package com.leewyatt.github.tank.ui;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.scene.SubScene;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import com.leewyatt.github.tank.GameType;
 import com.leewyatt.github.tank.TankApp;
 import javafx.animation.PauseTransition;
@@ -44,7 +44,7 @@ public class SuccessScene extends SubScene {
 
         pt = new PauseTransition(Duration.seconds(2));
         pt.setOnFinished(event -> {
-            if (geti("level") == Config.MAX_LEVEL) {
+            if (geti("level") == GameConfig.MAX_LEVEL) {
                 getDialogService().showConfirmationBox("WIN! Passed all levels. Continue?", result -> {
                     if (result) {
                         getGameController().gotoMainMenu();

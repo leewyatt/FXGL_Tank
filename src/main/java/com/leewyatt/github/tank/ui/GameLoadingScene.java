@@ -8,7 +8,6 @@ import javafx.scene.shape.Rectangle;
  * @author LeeWyatt
  */
 public class GameLoadingScene extends LoadingScene {
-
     public GameLoadingScene() {
         Rectangle rect = new Rectangle(getAppWidth(),getAppHeight(), Color.web("#666666"));
         getContentRoot().getChildren().setAll(rect);

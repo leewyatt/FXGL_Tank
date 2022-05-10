@@ -26,6 +26,7 @@
                     <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
+            <!--        jlink plugin 0.0.8似乎还不支持Apple M1 芯片   -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

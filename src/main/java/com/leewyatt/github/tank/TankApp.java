@@ -9,8 +9,8 @@ import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.components.EffectComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.entity.level.Level;
+import com.almasb.fxgl.entity.level.tiled.TMXLevelLoader;
 import com.almasb.fxgl.time.TimerAction;
 import com.leewyatt.github.tank.collision.*;
 import com.leewyatt.github.tank.components.PlayerComponent;
@@ -29,7 +29,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -41,9 +43,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  */
 public class TankApp extends GameApplication {
 
-    /**
-     * 目前地图共制作了3关
-     */
+    public int initLevel = 1;
+
     private Entity player;
     private PlayerComponent playerComponent;
     private Random random = new Random();
@@ -68,11 +69,6 @@ public class TankApp extends GameApplication {
      */
     private TimerAction spawnEnemyTimerAction;
 
-    /**
-     * 基地四周的防御
-     * 按照游戏规则: 默认是砖头墙, 吃了铁锨后,升级成为石头墙;
-     */
-
     @Override
     protected void onPreInit() {
         getSettings().setGlobalSoundVolume(0.5);
@@ -92,30 +88,36 @@ public class TankApp extends GameApplication {
         settings.setDefaultCursor(new CursorInfo("ui/cursor.png", 0, 0));
         //FPS,CPU,RAM等信息的显示
         //settings.setProfilingEnabled(true);
+        //开发模式.这样可以输出较多的日志异常追踪
+        //settings.setApplicationMode(ApplicationMode.DEVELOPER);
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public StartupScene newStartup(int width, int height) {
                 //自定义启动场景
                 return new GameStartupScene(width, height);
             }
+
             @Override
             public FXGLMenu newMainMenu() {
                 //主菜单场景
                 return new GameMainMenu();
             }
+
             @Override
             public LoadingScene newLoadingScene() {
                 //游戏前的加载场景
                 return new GameLoadingScene();
             }
         });
-        //开发模式.这样可以输出较多的日志异常追踪
-        //settings.setApplicationMode(ApplicationMode.DEVELOPER);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("level", 1);
+        if (getFileSystemService().exists(GameConfig.CUSTOM_LEVEL_PATH)) {
+            vars.put("level", 0);
+        }else {
+            vars.put("level", 1);
+        }
         vars.put("playerBulletLevel", 1);
         vars.put("freezingEnemy", false);
         vars.put("destroyedEnemy", 0);
@@ -125,58 +127,64 @@ public class TankApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        Input input = getInput();
-        input.addAction(new UserAction("Move Up") {
-            @Override
-            protected void onAction() {
-                if (playerComponent != null && !getb("gameOver") && player.isActive()) {
-                    playerComponent.up();
-                }
-            }
-        }, KeyCode.UP);
-        input.addAction(new UserAction("Move Down") {
-            @Override
-            protected void onAction() {
-                if (playerComponent != null && !getb("gameOver") && player.isActive()) {
-                    playerComponent.down();
-                }
-            }
-        }, KeyCode.DOWN);
-        input.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                if (playerComponent != null && !getb("gameOver") && player.isActive()) {
-                    playerComponent.left();
-                }
-            }
-        }, KeyCode.LEFT);
-        input.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                if (playerComponent != null && !getb("gameOver") && player.isActive()) {
-                    playerComponent.right();
-                }
-            }
-        }, KeyCode.RIGHT);
+        onKey(KeyCode.W, this::moveUpAction);
+        onKey(KeyCode.UP, this::moveUpAction);
 
-        input.addAction(new UserAction("Shoot") {
-            @Override
-            protected void onAction() {
-                if (playerComponent != null && !getb("gameOver") && player.isActive()) {
-                    playerComponent.shoot();
-                }
-            }
-        }, KeyCode.SPACE);
+        onKey(KeyCode.S, this::moveDownAction);
+        onKey(KeyCode.DOWN, this::moveDownAction);
 
+        onKey(KeyCode.A, this::moveLeftAction);
+        onKey(KeyCode.LEFT, this::moveLeftAction);
+
+        onKey(KeyCode.D, this::moveRightAction);
+        onKey(KeyCode.RIGHT, this::moveRightAction);
+
+        onKey(KeyCode.SPACE, this::shootAction);
+        onKey(KeyCode.F, this::shootAction);
+    }
+
+    private boolean tankIsReady() {
+        return player != null && playerComponent != null && !getb("gameOver") && player.isActive();
+    }
+
+    private void shootAction() {
+        if (tankIsReady()) {
+            playerComponent.shoot();
+        }
+    }
+
+    private void moveRightAction() {
+        if (tankIsReady()) {
+            playerComponent.right();
+        }
+    }
+
+    private void moveLeftAction() {
+        if (tankIsReady()) {
+            playerComponent.left();
+        }
+    }
+
+    private void moveDownAction() {
+        if (tankIsReady()) {
+            playerComponent.down();
+        }
+    }
+
+    private void moveUpAction() {
+        if (tankIsReady()) {
+            playerComponent.up();
+        }
     }
 
     @Override
     protected void initGame() {
         getGameScene().setBackgroundColor(Color.BLACK);
         getGameWorld().addEntityFactory(new GameEntityFactory());
+
         buildAndStartLevel();
         getip("destroyedEnemy").addListener((ob, ov, nv) -> {
-            if (nv.intValue() == Config.ENEMY_AMOUNT) {
+            if (nv.intValue() == GameConfig.ENEMY_AMOUNT) {
                 set("gameOver", true);
                 play("Win.wav");
                 runOnce(
@@ -238,7 +246,19 @@ public class TankApp extends GameApplication {
 
         expireAction(freezingTimerAction);
         expireAction(spadeTimerAction);
-        setLevelFromMap("level" + geti("level") + ".tmx");
+        //如果关卡是 0 ,那么从用户自定义地图开始游戏
+       if (geti("level")==0){
+           Level level;
+           try {
+               level = new TMXLevelLoader()
+                       .load(new File(GameConfig.CUSTOM_LEVEL_PATH).toURI().toURL(), getGameWorld());
+               getGameWorld().setLevel(level);
+           } catch (MalformedURLException e) {
+               throw new RuntimeException(e);
+           }
+       }else {
+           setLevelFromMap("level" + geti("level") + ".tmx");
+       }
         play("start.wav");
         player = null;
         player = spawn("player", 9 * 24 + 3, 25 * 24);
@@ -261,24 +281,24 @@ public class TankApp extends GameApplication {
             spawnEnemyTimerAction.expire();
             spawnEnemyTimerAction = null;
         }
-        //用于检测碰撞的空白实体
-        Entity emptyEntity = spawn("empty", new SpawnData(-100, -100));
+        //用于检测碰撞的实体(避免坦克一产生就和其他坦克发生碰撞,"纠缠到一起")
+        Entity spawnBox = spawn("spawnBox", new SpawnData(-100, -100));
 
         //用于产生敌人的定时器, 定期尝试产生敌军坦克, 但是如果生成敌军坦克的位置,被其他现有的坦克占据, 那么此次就不生成敌军坦克
         spawnEnemyTimerAction = run(() -> {
             //尝试产生敌军坦克的次数; 2次或者3次
             int testTimes = FXGLMath.random(2, 3);
             for (int i = 0; i < testTimes; i++) {
-                if (geti("spawnedEnemy") < Config.ENEMY_AMOUNT) {
+                if (geti("spawnedEnemy") < GameConfig.ENEMY_AMOUNT) {
                     boolean canGenerate = true;
                     //随机抽取数组的一个x坐标
                     int x = enemySpawnX[random.nextInt(3)];
                     int y = 30;
-                    emptyEntity.setPosition(x, y);
+                    spawnBox.setPosition(x, y);
                     List<Entity> tankList = getGameWorld().getEntitiesByType(GameType.ENEMY, GameType.PLAYER);
                     //如果即将产生的敌军坦克位置和 目前已有的坦克位置冲突, 那么此处就不产生坦克
                     for (Entity tank : tankList) {
-                        if (tank.isActive() && emptyEntity.isColliding(tank)) {
+                        if (tank.isActive() && spawnBox.isColliding(tank)) {
                             canGenerate = false;
                             break;
                         }
@@ -290,7 +310,7 @@ public class TankApp extends GameApplication {
                                 new SpawnData(x, y).put("assentName", "tank/E" + FXGLMath.random(1, 12) + "U.png"));
                     }
                     //隐藏这个实体
-                    emptyEntity.setPosition(-100, -100);
+                    spawnBox.setPosition(-100, -100);
 
                 } else {
                     if (spawnEnemyTimerAction != null) {
@@ -298,7 +318,7 @@ public class TankApp extends GameApplication {
                     }
                 }
             }
-        }, Config.SPAWN_ENEMY_TIME);
+        }, GameConfig.SPAWN_ENEMY_TIME);
     }
 
     @Override
@@ -315,13 +335,12 @@ public class TankApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new PlayerItemHandler());
     }
 
-
     public void freezingEnemy() {
         expireAction(freezingTimerAction);
         set("freezingEnemy", true);
         freezingTimerAction = runOnce(() -> {
             set("freezingEnemy", false);
-        }, Config.STOP_MOVE_TIME);
+        }, GameConfig.STOP_MOVE_TIME);
     }
 
     public void spadeBackUpBase() {
@@ -331,8 +350,12 @@ public class TankApp extends GameApplication {
         spadeTimerAction = runOnce(() -> {
             //基地周围的墙,还原成砖头墙
             updateWall(false);
-        }, Config.SPADE_TIME);
+        }, GameConfig.SPADE_TIME);
     }
+    /**
+     * 基地四周的防御
+     * 按照游戏规则: 默认是砖头墙, 吃了铁锨后,升级成为石头墙;
+     */
     private void updateWall(boolean isStone) {
         //循环找到包围基地周围的墙
         for (int row = 0; row < 3; row++) {

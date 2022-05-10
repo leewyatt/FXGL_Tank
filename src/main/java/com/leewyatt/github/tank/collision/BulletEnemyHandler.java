@@ -4,7 +4,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import com.leewyatt.github.tank.GameType;
 import com.leewyatt.github.tank.ItemType;
 
@@ -27,7 +27,7 @@ public class BulletEnemyHandler extends CollisionHandler {
         enemy.removeFromWorld();
         inc("destroyedEnemy", 1);
         // get item 一定几率得到道具
-        if (FXGLMath.randomBoolean(Config.SPAWN_ITEM_PRO)) {
+        if (FXGLMath.randomBoolean(GameConfig.SPAWN_ITEM_PRO)) {
             spawn("item",
                     new SpawnData(FXGLMath.random(50, getAppWidth() - 50 - 6 * 24)
                             , FXGLMath.random(50, getAppHeight() - 50))

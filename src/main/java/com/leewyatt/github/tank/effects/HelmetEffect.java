@@ -5,7 +5,7 @@ import com.almasb.fxgl.dsl.components.Effect;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
-import com.leewyatt.github.tank.Config;
+import com.leewyatt.github.tank.GameConfig;
 import javafx.util.Duration;
 
 /**
@@ -16,7 +16,7 @@ public class HelmetEffect extends Effect {
 
 
     public HelmetEffect() {
-        super(Config.HELMET_TIME);
+        super(GameConfig.HELMET_TIME);
         helmetAnimTexture = new AnimatedTexture(new AnimationChannel(FXGL.image("item/armed_helmet.png"), Duration.seconds(.3), 4)).loop();
     }
 
