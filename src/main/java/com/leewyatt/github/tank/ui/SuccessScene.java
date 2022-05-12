@@ -18,6 +18,7 @@ import static com.almasb.fxgl.dsl.FXGL.inc;
 
 /**
  * @author LeeWyatt
+ * 成功过关场景
  */
 public class SuccessScene extends SubScene {
     private final PauseTransition pt;

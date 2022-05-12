@@ -14,7 +14,7 @@ public enum Dir {
     DOWN(new Point2D(0, 1)),
     LEFT(new Point2D(-1, 0));
 
-    public Point2D vector;
+    public final Point2D vector;
 
     Dir(Point2D vector) {
         this.vector = vector;
@@ -23,7 +23,5 @@ public enum Dir {
     public Point2D getVector() {
         return vector;
     }
-
-
 
 }

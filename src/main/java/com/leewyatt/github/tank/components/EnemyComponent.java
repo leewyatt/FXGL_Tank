@@ -23,6 +23,8 @@ import static com.leewyatt.github.tank.GameType.*;
 
 /**
  * @author LeeWyatt
+ * 敌人坦克的行为,随机移动, 遇见障碍物, 1. 提高射击的几率;(帮助敌人打开更多的土墙)
+ *                               2. 提高转弯的几率;(帮助敌人避开石头,水面等)
  */
 public class EnemyComponent extends Component {
     private BoundingBoxComponent bbox;
@@ -72,20 +74,12 @@ public class EnemyComponent extends Component {
     public void setMoveDir(Dir moveDir) {
         this.moveDir = moveDir;
         switch (moveDir) {
-            case UP:
-                up();
-                break;
-            case DOWN:
-                down();
-                break;
-            case LEFT:
-                left();
-                break;
-            case RIGHT:
-                right();
-                break;
-            default:
-                break;
+            case UP -> up();
+            case DOWN -> down();
+            case LEFT -> left();
+            case RIGHT -> right();
+            default -> {
+            }
         }
     }
 
@@ -142,7 +136,7 @@ public class EnemyComponent extends Component {
         for (int i = 0; i < length; i++) {
             entity.translate(velocity.x, velocity.y);
             boolean collision = false;
-            Entity entityTemp = null;
+            Entity entityTemp;
             for (int j = 0; j < blockList.size(); j++) {
                 entityTemp = blockList.get(j);
                 if (entityTemp == entity) {

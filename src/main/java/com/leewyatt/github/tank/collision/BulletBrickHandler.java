@@ -12,6 +12,14 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 子弹和墙壁碰撞; 这个方法,同时可以用于 子弹和石头, 子弹和草地
+ * 因为子弹可能击中两个物体交界的地方;
+ * 所以要同时判断,子弹到底碰撞了多少个物体;根据物体不同,那么做不同的处理
+ * 如果碰到了草地 ,那么子弹不会销毁;
+ *              如果是顶级子弹,那么草地(森林)会被销毁,子弹依然不会被销毁
+ * 如果碰到了砖墙 ,那么子弹和撞墙都消失
+ * 如果碰到了石头 ,那么子弹会消失
+ *              如果是顶级子弹, 那么石头也会消失
  */
 public class BulletBrickHandler extends CollisionHandler {
 

@@ -18,6 +18,10 @@ import java.util.List;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.leewyatt.github.tank.GameType.*;
 
+/**
+ * @author LeeWyatt
+ * 玩家的行为,移动和射击
+ */
 public class PlayerComponent extends Component {
     /**
      * 为了防止出现斜向上,斜向下等角度的移动,
@@ -67,7 +71,6 @@ public class PlayerComponent extends Component {
         getEntity().setRotation(180);
         moveDir = Dir.DOWN;
         move();
-
     }
 
     public void up() {
@@ -102,6 +105,7 @@ public class PlayerComponent extends Component {
                     break;
                 }
             }
+            //运动, 遇到障碍物回退
             if (collision) {
                 entity.translate(-velocity.x, -velocity.y);
                 break;

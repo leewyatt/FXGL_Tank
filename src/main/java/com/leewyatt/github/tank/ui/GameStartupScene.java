@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 
 /**
  * @author LeeWyatt
+ * 游戏启动的场景
  */
 public class GameStartupScene extends StartupScene {
     public GameStartupScene(int appWidth, int appHeight) {

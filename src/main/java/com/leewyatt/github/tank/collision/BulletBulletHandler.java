@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 /**
  * @author LeeWyatt
+ * 子弹和子弹碰撞, 只要是不同阵营的子弹, 两颗子弹都会消失
  */
 public class BulletBulletHandler extends CollisionHandler {
     public BulletBulletHandler() {

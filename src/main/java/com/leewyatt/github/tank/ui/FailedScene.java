@@ -13,6 +13,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 失败后的场景
  */
 public class FailedScene extends SubScene {
 

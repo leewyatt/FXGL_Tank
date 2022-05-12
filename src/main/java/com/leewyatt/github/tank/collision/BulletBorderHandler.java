@@ -6,6 +6,7 @@ import com.leewyatt.github.tank.GameType;
 
 /**
  * @author LeeWyatt
+ * 碰撞检测: 子弹和边界碰撞,子弹消失,但是不产生爆炸的效果和声音,因为声音和爆炸效果太多,感觉不好.
  */
 public class BulletBorderHandler extends CollisionHandler {
 

@@ -27,20 +27,24 @@ import java.util.List;
 
 /**
  * @author LeeWyatt
+ * 产生实体的工具类
  */
 public class GameEntityFactory implements EntityFactory {
 
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
+        //生命值组件
         HealthIntComponent hpComponent = new HealthIntComponent(GameConfig.PLAYER_HEALTH);
+        //进度条(生命值)
         ProgressBar hpView = new ProgressBar(false);
         hpView.setFill(Color.LIGHTGREEN);
         hpView.setMaxValue(GameConfig.PLAYER_HEALTH);
         hpView.setWidth(35);
         hpView.setHeight(8);
         hpView.setTranslateY(42);
-
+        //进度条的值和生命值组件的值绑定
         hpView.currentValueProperty().bind(hpComponent.valueProperty());
+        //生命值不同,生命值进度条颜色不同
         hpComponent.valueProperty().addListener((ob, ov, nv) -> {
             int hpValue = nv.intValue();
             if (hpValue >= GameConfig.PLAYER_HEALTH * 0.7) {

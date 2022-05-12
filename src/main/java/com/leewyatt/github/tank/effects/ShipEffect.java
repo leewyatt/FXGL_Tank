@@ -8,13 +8,13 @@ import javafx.util.Duration;
 
 /**
  * @author LeeWyatt
+ * 玩家获得船的效果
  */
 public class ShipEffect extends Effect {
-    private Texture shipTexture;
+    private final Texture shipTexture;
     public ShipEffect() {
         super(Duration.INDEFINITE);
         shipTexture = FXGL.texture("item/armed_ship.png");
-
     }
 
     @Override

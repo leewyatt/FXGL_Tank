@@ -10,6 +10,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 子弹不分阵营, 只要击中旗子,立刻判断为失败
  */
 public class BulletFlagHandler extends CollisionHandler {
 

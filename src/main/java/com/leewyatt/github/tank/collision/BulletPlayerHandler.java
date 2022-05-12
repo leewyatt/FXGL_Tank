@@ -12,6 +12,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 子弹和玩家碰撞(为了扩展多个玩家,所以这里忽略了来自同盟的子弹,友军不能误伤;同样忽略的代码在产生子弹实体的方法里)
+ * 子弹消失,玩家减少生命值
  */
 public class BulletPlayerHandler extends CollisionHandler {
 

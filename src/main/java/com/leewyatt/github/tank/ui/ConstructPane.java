@@ -25,6 +25,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 /**
  * @author LeeWyatt
+ * 自定义创建地图的场景
  */
 public class ConstructPane extends BorderPane {
 
@@ -112,7 +113,7 @@ public class ConstructPane extends BorderPane {
         btnStart.setOnAction(event -> {
             saveConstructMap(true);
         });
-        VBox bottomBox = new VBox(15, gridCheckBox, btnBack, btnClear,btnLoad, btnStart);
+        VBox bottomBox = new VBox(15, gridCheckBox, btnBack, btnClear, btnLoad, btnStart);
         bottomBox.getStyleClass().add("bottom-box");
         VBox.setMargin(bottomBox, new Insets(20, 0, 0, 0));
         return bottomBox;
@@ -189,37 +190,35 @@ public class ConstructPane extends BorderPane {
         list.addAll(text("levelEnd.txt"));
         //保存地图tmx文件,并开始游戏
         getFileSystemService()
+                //保存地图数据tmx文件
                 .writeDataTask(list, GameConfig.CUSTOM_LEVEL_PATH)
                 .onSuccess(e -> {
-                    //TankApp appCast = getAppCast();
-                    //appCast.initLevel = 0;
                     set("level", 0);
                     if (startGame) {
                         getGameController().startNewGame();
                     }
+                    //保存地图数据(二维数组对象)
                     saveMapData();
                 })
                 .run();
     }
 
     private void saveMapData() {
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(GameConfig.CUSTOM_LEVEL_DATA));
+        try (FileOutputStream fos = new FileOutputStream(GameConfig.CUSTOM_LEVEL_DATA);
+             ObjectOutputStream out = new ObjectOutputStream(fos)) {
             out.writeObject(map);
             out.flush();
-            out.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void loadMapData() {
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(GameConfig.CUSTOM_LEVEL_DATA));
+        try (FileInputStream fis = new FileInputStream(GameConfig.CUSTOM_LEVEL_DATA);
+             ObjectInputStream in = new ObjectInputStream(fis)) {
             map = (GameType[][]) in.readObject();
-            in.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -385,5 +384,4 @@ public class ConstructPane extends BorderPane {
             }
         }
     }
-
 }

@@ -10,16 +10,15 @@ import javafx.util.Duration;
 
 /**
  * @author LeeWyatt
+ * 玩家获得无敌道具的效果
  */
 public class HelmetEffect extends Effect {
-    private AnimatedTexture helmetAnimTexture;
-
+    private final AnimatedTexture helmetAnimTexture;
 
     public HelmetEffect() {
         super(GameConfig.HELMET_TIME);
         helmetAnimTexture = new AnimatedTexture(new AnimationChannel(FXGL.image("item/armed_helmet.png"), Duration.seconds(.3), 4)).loop();
     }
-
 
     @Override
     public void onStart( Entity entity) {
@@ -32,6 +31,5 @@ public class HelmetEffect extends Effect {
     public void onEnd( Entity entity) {
         entity.getViewComponent().removeChild(helmetAnimTexture);
     }
-
 
 }
