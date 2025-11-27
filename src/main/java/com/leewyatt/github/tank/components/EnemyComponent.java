@@ -1,7 +1,6 @@
 package com.leewyatt.github.tank.components;
 
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
@@ -33,6 +32,12 @@ public class EnemyComponent extends Component {
     private double speed = 0;
     private Dir moveDir;
     private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE, ENEMY, PLAYER, BORDER_WALL));
+
+    /**
+     * 移动累加器，用于平滑移动速度
+     * 累积每帧的小数部分，避免因 tpf 波动导致速度不稳定
+     */
+    private double moveAccumulator = 0;
 
     /**
      * 变成坦克前3秒不能动
@@ -72,6 +77,10 @@ public class EnemyComponent extends Component {
     }
 
     public void setMoveDir(Dir moveDir) {
+        // 如果方向改变，重置累加器
+        if (this.moveDir != moveDir) {
+            this.moveAccumulator = 0;
+        }
         this.moveDir = moveDir;
         switch (moveDir) {
             case UP -> up();
@@ -91,19 +100,16 @@ public class EnemyComponent extends Component {
     private void left() {
         getEntity().setRotation(270);
         move();
-
     }
 
     private void down() {
         getEntity().setRotation(180);
         move();
-
     }
 
     private void up() {
         getEntity().setRotation(0);
         move();
-
     }
 
     @Override
@@ -121,20 +127,29 @@ public class EnemyComponent extends Component {
         }, Duration.seconds(1));
     }
 
-    private Vec2 velocity = new Vec2();
-
     private void move() {
         if (!getEntity().isActive()) {
             return;
         }
-        velocity.set((float) (moveDir.getVector().getX()*speed), (float) (moveDir.getVector().getY()*speed));
-        int length = Math.round(velocity.length());
-        velocity.normalizeLocal();
 
-        // 应该优化
+        // 累加本帧应该移动的距离
+        moveAccumulator += speed;
+
+        // 只移动整数像素部分
+        int pixelsToMove = (int) moveAccumulator;
+        if (pixelsToMove == 0) {
+            return;
+        }
+        moveAccumulator -= pixelsToMove;  // 保留小数部分到下一帧
+
+        // 获取移动方向的单位向量
+        float dirX = (float) moveDir.getVector().getX();
+        float dirY = (float) moveDir.getVector().getY();
+
         List<Entity> blockList = blocks.get().getEntitiesCopy();
-        for (int i = 0; i < length; i++) {
-            entity.translate(velocity.x, velocity.y);
+
+        for (int i = 0; i < pixelsToMove; i++) {
+            entity.translate(dirX, dirY);
             boolean collision = false;
             Entity entityTemp;
             for (int j = 0; j < blockList.size(); j++) {
@@ -148,12 +163,14 @@ public class EnemyComponent extends Component {
                 }
             }
             if (collision) {
-                entity.translate(-velocity.x, -velocity.y);
-                //碰撞后增加开火几率; Increase the chance of firing after a collision
+                entity.translate(-dirX, -dirY);
+                // 碰撞后重置累加器
+                moveAccumulator = 0;
+                // 碰撞后增加开火几率; Increase the chance of firing after a collision
                 if (FXGLMath.randomBoolean(0.6)) {
                     shoot();
                 }
-                //碰撞后增加改变方向的几率;Increase the chance of changing direction after collision;
+                // 碰撞后增加改变方向的几率; Increase the chance of changing direction after collision
                 if (FXGLMath.randomBoolean(0.3)) {
                     setMoveDir(Dir.values()[random.nextInt(4)]);
                 }

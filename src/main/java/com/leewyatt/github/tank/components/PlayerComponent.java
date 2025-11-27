@@ -1,6 +1,5 @@
 package com.leewyatt.github.tank.components;
 
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.EffectComponent;
@@ -16,7 +15,12 @@ import com.leewyatt.github.tank.effects.ShipEffect;
 import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.leewyatt.github.tank.GameType.*;
+import static com.leewyatt.github.tank.GameType.BORDER_WALL;
+import static com.leewyatt.github.tank.GameType.BRICK;
+import static com.leewyatt.github.tank.GameType.ENEMY;
+import static com.leewyatt.github.tank.GameType.FLAG;
+import static com.leewyatt.github.tank.GameType.SEA;
+import static com.leewyatt.github.tank.GameType.STONE;
 
 /**
  * @author LeeWyatt
@@ -28,8 +32,13 @@ public class PlayerComponent extends Component {
      */
     private boolean movedThisFrame = false;
     private double speed = 0;
-    private Vec2 velocity = new Vec2();
     private BoundingBoxComponent bbox;
+
+    /**
+     * 移动累加器，用于平滑移动速度
+     * 累积每帧的小数部分，避免因 tpf 波动导致速度不稳定
+     */
+    private double moveAccumulator = 0;
 
     private LazyValue<EntityGroup> blocksAll = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, SEA, STONE, ENEMY, BORDER_WALL));
     private LazyValue<EntityGroup> blocks = new LazyValue<>(() -> entity.getWorld().getGroup(BRICK, FLAG, STONE, ENEMY, BORDER_WALL));
@@ -60,7 +69,6 @@ public class PlayerComponent extends Component {
         getEntity().setRotation(270);
         moveDir = Dir.LEFT;
         move();
-
     }
 
     public void down() {
@@ -87,17 +95,30 @@ public class PlayerComponent extends Component {
         if (!getEntity().isActive()) {
             return;
         }
-        velocity.set((float) (moveDir.getVector().getX()*speed), (float) (moveDir.getVector().getY()*speed));
-        int length = Math.round(velocity.length());
-        velocity.normalizeLocal();
+
+        // 累加本帧应该移动的距离
+        moveAccumulator += speed;
+
+        // 只移动整数像素部分
+        int pixelsToMove = (int) moveAccumulator;
+        if (pixelsToMove == 0) {
+            return;
+        }
+        moveAccumulator -= pixelsToMove;  // 保留小数部分到下一帧
+
+        // 获取移动方向的单位向量
+        float dirX = (float) moveDir.getVector().getX();
+        float dirY = (float) moveDir.getVector().getY();
+
         List<Entity> blockList;
         if (entity.getComponent(EffectComponent.class).hasEffect(ShipEffect.class)) {
             blockList = blocks.get().getEntitiesCopy();
         } else {
             blockList = blocksAll.get().getEntitiesCopy();
         }
-        for (int i = 0; i < length; i++) {
-            entity.translate(velocity.x, velocity.y);
+
+        for (int i = 0; i < pixelsToMove; i++) {
+            entity.translate(dirX, dirY);
             boolean collision = false;
             for (int j = 0; j < blockList.size(); j++) {
                 if (blockList.get(j).getBoundingBoxComponent().isCollidingWith(bbox)) {
@@ -105,9 +126,10 @@ public class PlayerComponent extends Component {
                     break;
                 }
             }
-            //运动, 遇到障碍物回退
+            // 运动, 遇到障碍物回退
             if (collision) {
-                entity.translate(-velocity.x, -velocity.y);
+                entity.translate(-dirX, -dirY);
+                moveAccumulator = 0;  // 碰撞后重置累加器
                 break;
             }
         }
